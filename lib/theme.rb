@@ -20,6 +20,7 @@ module Theme
 
   def reset_config!
     @config = OpenStruct.new({
+      component_path: './components',
       components: {}
     })
   end
