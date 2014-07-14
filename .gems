@@ -1,3 +1,4 @@
 nokogiri -v 1.6.3.rc3
 nokogiri-styles -v 0.1.2
 cuba -v 3.1.1
+tilt -v 2.0.1
