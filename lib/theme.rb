@@ -1,5 +1,3 @@
-require "theme/version"
-
 module Theme
-  # Your code goes here...
+  autoload :Version, 'theme/version'
 end
