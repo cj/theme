@@ -15,7 +15,7 @@ define install_bs
 	fi;
 
 	bs gem list dep-cj -i || gem install dep-cj
-	bs gem list cutest -i || gem install cutest-cj
+	bs gem list cutest-cj -i || gem install cutest-cj
 	bs gem list pry -i || gem install pry
 	bs gem list awesome_print -i || bs gem install awesome_print
 endef

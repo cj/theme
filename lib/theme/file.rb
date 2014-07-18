@@ -13,13 +13,13 @@ module Theme
 
         ext = path[/\.[^.]*$/][1..-1]
 
-        if ext && File.file?(path)
+        if ext && ::File.file?(path)
           if STATIC_TYPES.include? ext
             template = Tilt::PlainTemplate.new nil, 1, outvar: '@_output', default_encoding: 'UTF-8' do |t|
-              File.read(path)
+              ::File.read(path)
             end
           elsif FONT_TYPES.include?(ext) || IMAGE_TYPES.include?(ext)
-            template = File.read path
+            template = ::File.read path
           else
             template = Tilt.new path, 1, outvar: '@_output'
           end
@@ -27,7 +27,7 @@ module Theme
           VIEW_TYPES.each do |type|
             f = "#{path}.#{type}"
 
-            if File.file? f
+            if ::File.file? f
               template = Tilt.new f, 1, outvar: '@_output'
               break
             end
@@ -35,7 +35,7 @@ module Theme
         end
 
         unless template
-          raise Theme::NoFileFound,
+          raise Theme::No::FileFound,
             "Could't find file: #{path} with any of these extensions: #{VIEW_TYPES.join(', ')}."
         end
 
