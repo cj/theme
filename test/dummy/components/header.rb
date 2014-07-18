@@ -1,4 +1,5 @@
 class HeaderComponent < Theme::Component
+  key :header
   src 'test/dummy/index.html'
   dom 'body > .body > header'
   clean do
@@ -12,6 +13,7 @@ class HeaderComponent < Theme::Component
       end
     end
   end
+  handle_event :test, with: 'some_component_test', for: 'some_component'
 
   attr_reader :menu, :node_li, :node_ul
 
@@ -22,7 +24,11 @@ class HeaderComponent < Theme::Component
 
     add_menus @menu, node_menu
 
-    node.to_html
+    node
+  end
+
+  def some_component_test
+    'this is from the header component'
   end
 
   private

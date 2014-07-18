@@ -44,4 +44,17 @@ scope 'theme' do
     assert body[/Sub Menu/]
     assert body[/\/sub_menu/]
   end
+
+  test 'events' do
+    _, _, resp = Cuba.call({
+      'PATH_INFO'   => '/components',
+      'SCRIPT_NAME'   => '/components',
+      'REQUEST_METHOD' => 'GET',
+      'rack.input'     => {},
+      'QUERY_STRING'   => 'component_name=some_component&component_event=test'
+    })
+    body = resp.join
+
+    assert body['this is from the header component']
+  end
 end

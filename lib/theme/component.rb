@@ -10,6 +10,7 @@ module Theme
     def initialize instance
       @instance = instance
       @node     = self.class.node.clone
+      @name     = self.class.name
 
       instance.instance_variables.each do |name|
         instance_variable_set name, instance.instance_variable_get(name)
@@ -19,8 +20,15 @@ module Theme
     end
 
     class << self
-      attr_reader :html, :path
-      attr_accessor :node
+      attr_reader :html, :path, :key
+      attr_accessor :node, :events
+
+      def key name
+        @key ||= begin
+          Theme.config.components[name] = self.to_s
+          name
+        end
+      end
 
       def src path
         if path[/^\./]
@@ -49,6 +57,11 @@ module Theme
         block.call node
       end
       alias :setup :clean
+
+      def handle_event event, opts = {}
+        @events ||= []
+        @events.push [event, opts]
+      end
     end
 
     attr_accessor :node
@@ -76,7 +89,11 @@ module Theme
 
       options.clear
 
-      resp
+      if resp.is_a? Nokogiri::XML::Element
+        resp.to_html
+      else
+        resp
+      end
     end
 
     def set_locals options
@@ -86,6 +103,47 @@ module Theme
       end
 
       self
+    end
+
+    def trigger component_event, data = {}
+      data           = data.to_h
+      component_name = data.has_key?(:for) ? data.delete(:for) : name
+
+      event.trigger component_name, component_event, data.to_h
+      data.clear
+    end
+
+    def trigger_event component_name, component_event, data
+      component_name  = component_name.to_s
+      component_event = component_event.to_s
+
+      if class_events = self.class.events
+        class_events.each do |class_event, opts|
+          class_event = class_event.to_s
+          if class_event == component_event && (
+            component_name == @name || opts[:for] == component_name
+          )
+            unless e = opts[:with]
+              e = component_event
+            end
+
+            if method(e) && method(e).parameters.length > 0
+              opts = Hashr.new data
+              resp = send e, opts
+            else
+              resp = send e
+            end
+
+            if resp.is_a? Nokogiri::XML::Element
+              res.write resp.to_html
+            else
+              res.write resp
+            end
+          end
+        end
+      end
+
+      data.clear
     end
   end
 end

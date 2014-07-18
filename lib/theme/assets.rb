@@ -7,8 +7,8 @@ module Theme
 
     class << self
       def setup app
-        app.use Middleware
         app.plugin Render
+        app.use Middleware
       end
 
       def css_assets options = {}
@@ -66,11 +66,11 @@ module Theme
     end
 
     def css_assets options = {}
-      self.class.css_assets options
+      Theme::Assets.css_assets options
     end
 
     def js_assets options = {}
-      self.class.css_assets options
+      Theme::Assets.js_assets options
     end
 
     private

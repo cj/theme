@@ -8,6 +8,7 @@ module Theme
   autoload :Assets,     'theme/assets'
   autoload :Middleware, 'theme/middleware'
   autoload :Render,     'theme/render'
+  autoload :Event,      'theme/event'
 
   IMAGE_TYPES  = %w(png gif jpg jpeg)
   FONT_TYPES   = %w(eot woff ttf svg)
@@ -22,7 +23,8 @@ module Theme
     def setup app = false
       if app
         load_component_files
-        app.plugin Theme::Assets
+        app.plugin Assets
+        app.use Middleware
       else
         yield config
       end
@@ -36,6 +38,7 @@ module Theme
       @config = OpenStruct.new({
         path:             './',
         component_path:   './theme/components',
+        component_url:    '/components',
         components:       {},
         view_path:        './views',
         layout:           'app',
@@ -113,14 +116,22 @@ module Theme
   end
   alias :comp :component
 
-  private
+  def theme_event
+    req.env[:_theme_event] ||= begin
+      Event.new
+    end
+  end
 
   def theme_components
     req.env[:_theme_components] ||= begin
       components = {}
 
       Theme.config.components.each do |name, klass|
-        components[name] = Object.const_get(klass).new self
+        component        = Object.const_get(klass).new self
+        components[name] = component
+        theme_event.register_for_event(
+          event: :trigger, listener: component, callback: :trigger_event
+        )
       end
 
       components
