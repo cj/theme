@@ -14,9 +14,9 @@ define install_bs
 		echo 'RACK_ENV=development' >> .env; \
 	fi;
 
-	bs gem list dep-cj -i || gem install dep-cj
-	bs gem list cutest-cj -i || gem install cutest-cj
-	bs gem list pry -i || gem install pry
+	bs gem list dep-cj -i || bs gem install dep-cj
+	bs gem list cutest-cj -i || bs gem install cutest-cj
+	bs gem list pry -i || bs gem install pry
 	bs gem list awesome_print -i || bs gem install awesome_print
 endef
 
