@@ -8,12 +8,15 @@ module Theme
   autoload :Assets,     'theme/assets'
   autoload :Middleware, 'theme/middleware'
   autoload :Render,     'theme/render'
-  autoload :Event,      'theme/event'
+  autoload :Events,     'theme/events'
 
-  IMAGE_TYPES  = %w(png gif jpg jpeg)
-  FONT_TYPES   = %w(eot woff ttf svg)
-  STATIC_TYPES = %w(html js css map)
-  VIEW_TYPES   = %w(html slim haml erb md markdown mkd mab nokogiri)
+  IMAGE_TYPES   = %w(png gif jpg jpeg)
+  FONT_TYPES    = %w(eot woff ttf svg)
+  STATIC_TYPES  = %w(html js css map)
+  VIEW_TYPES    = %w(html slim haml erb md markdown mkd mab nokogiri)
+  PARTIAL_REGEX = Regexp.new '([a-zA-Z_]+)$'
+  JS_ESCAPE     = { '\\' => '\\\\', '</' => '<\/', "\r\n" => '\n', "\n" => '\n', "\r" => '\n', '"' => '\\"', "'" => "\\'" }
+
 
   attr_accessor :config, :reset_config
 
@@ -116,22 +119,26 @@ module Theme
   end
   alias :comp :component
 
-  def theme_event
-    req.env[:_theme_event] ||= begin
-      Event.new
-    end
-  end
-
   def theme_components
+      # Dir.glob("#{Theme.config.component_path}/**/*.rb").each do |c|
+      #   load c
+      # end
     req.env[:_theme_components] ||= begin
       components = {}
 
       Theme.config.components.each do |name, klass|
         component        = Object.const_get(klass).new self
         components[name] = component
-        theme_event.register_for_event(
-          event: :trigger, listener: component, callback: :trigger_event
-        )
+      end
+
+      components.each do |name, component|
+        if listeners = component.class._listeners
+          listeners.each do |id|
+            if c = components[id.to_sym]
+              c.add_listener component
+            end
+          end
+        end
       end
 
       components

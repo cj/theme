@@ -5,11 +5,13 @@ Hashr.raise_missing_keys = true
 
 module Theme
   class Component < SimpleDelegator
+    include Theme::Events
+
     attr_reader :instance
 
-    def initialize instance
+    def initialize instance = false
       @instance = instance
-      @node     = self.class.node.clone
+      @node     = self.class.node.clone if self.class.node
       @name     = self.class.name
 
       instance.instance_variables.each do |name|
@@ -20,14 +22,12 @@ module Theme
     end
 
     class << self
-      attr_reader :html, :path, :key
-      attr_accessor :node, :events
+      attr_reader :html, :path, :id
+      attr_accessor :node
 
-      def key name
-        @key ||= begin
-          Theme.config.components[name] = self.to_s
-          name
-        end
+      def id name
+        Theme.config.components[name] = self.to_s
+        @id = name
       end
 
       def src path
@@ -57,11 +57,6 @@ module Theme
         block.call node
       end
       alias :setup :clean
-
-      def handle_event event, opts = {}
-        @events ||= []
-        @events.push [event, opts]
-      end
     end
 
     attr_accessor :node
@@ -103,47 +98,6 @@ module Theme
       end
 
       self
-    end
-
-    def trigger component_event, data = {}
-      data           = data.to_h
-      component_name = data.has_key?(:for) ? data.delete(:for) : name
-
-      event.trigger component_name, component_event, data.to_h
-      data.clear
-    end
-
-    def trigger_event component_name, component_event, data
-      component_name  = component_name.to_s
-      component_event = component_event.to_s
-
-      if class_events = self.class.events
-        class_events.each do |class_event, opts|
-          class_event = class_event.to_s
-          if class_event == component_event && (
-            component_name == @name || opts[:for] == component_name
-          )
-            unless e = opts[:with]
-              e = component_event
-            end
-
-            if method(e) && method(e).parameters.length > 0
-              opts = Hashr.new data
-              resp = send e, opts
-            else
-              resp = send e
-            end
-
-            if resp.is_a? Nokogiri::XML::Element
-              res.write resp.to_html
-            else
-              res.write resp
-            end
-          end
-        end
-      end
-
-      data.clear
     end
   end
 end

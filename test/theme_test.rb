@@ -1,12 +1,8 @@
 require_relative 'helper'
 
-setup do
-  Theme.reset_config!
+prepare do
   Theme.setup do |c|
     c.component_path = './test/dummy/components'
-    c.components = {
-      header: 'HeaderComponent'
-    }
   end
 
   Cuba.reset!

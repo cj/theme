@@ -1,8 +1,6 @@
 module Theme
   module Assets
     module Render
-      PARTIAL_REGEX = Regexp.new '([a-zA-Z_]+)$'
-
       def self.setup app
         app.settings[:render] ||= {}
         load_engines

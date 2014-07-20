@@ -50,12 +50,9 @@ module Theme
     def render_component
       app.instance_variable_set :@res, res
       app.instance_variable_set :@req, req
-      app.theme_components
-      app.theme_event.trigger(
-        req.params['component_name'],
-        req.params['component_event'],
-        Hashr.new(req.params)
-      )
+      name  = req.params['component_name'].to_sym
+      event = req.params['component_event'].to_sym
+      app.theme_components[name].trigger event, Hashr.new(req.params)
       res.finish
     end
   end

@@ -21,7 +21,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "tilt"
   spec.add_dependency "nokogiri"
   spec.add_dependency "nokogiri-styles"
-  spec.add_dependency "eventable"
   spec.add_dependency "mab", "~> 0.0.3"
   spec.add_dependency "hashr", ">= 0.0.22"
 end

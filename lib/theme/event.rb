@@ -1,5 +1,3 @@
-require "theme/eventable"
-
 module Theme
   class Event
     include Eventable

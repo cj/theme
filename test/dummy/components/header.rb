@@ -1,5 +1,5 @@
 class HeaderComponent < Theme::Component
-  key :header
+  id :header
   src 'test/dummy/index.html'
   dom 'body > .body > header'
   clean do
@@ -13,7 +13,8 @@ class HeaderComponent < Theme::Component
       end
     end
   end
-  handle_event :test, with: 'some_component_test', for: 'some_component'
+
+  on_event :test, for: 'some_component', use: 'some_component_test'
 
   attr_reader :menu, :node_li, :node_ul
 
@@ -27,11 +28,11 @@ class HeaderComponent < Theme::Component
     node
   end
 
-  def some_component_test
-    'this is from the header component'
-  end
-
   private
+
+  def some_component_test
+    res.write 'this is from the header component'
+  end
 
   def add_menus menu, node_menu
     menu.each do |name, data|
