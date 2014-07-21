@@ -1,4 +1,9 @@
-.PHONY: install test server
+GEMSPEC=$(shell ls *.gemspec | head -1)
+VERSION=$(shell ruby -rubygems -e 'puts Gem::Specification.load("$(GEMSPEC)").version')
+PROJECT=$(shell ruby -rubygems -e 'puts Gem::Specification.load("$(GEMSPEC)").name')
+GEM=$(PROJECT)-$(VERSION).gem
+
+.PHONY: install package publish test server $(GEM)
 
 define install_bs
 	which bs || (wget https://raw.githubusercontent.com/educabilia/bs/master/bin/bs && chmod +x bs && sudo mv bs /usr/local/bin)
@@ -27,3 +32,13 @@ install:
 
 test:
 	bs env $$(cat .env.test) cutest test/**/*_test.rb
+
+package: $(GEM)
+
+# Always build the gem
+$(GEM):
+	gem build $(PROJECT).gemspec
+
+publish: $(GEM)
+	gem push $(GEM)
+	make clean
