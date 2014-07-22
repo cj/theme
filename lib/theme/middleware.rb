@@ -48,11 +48,17 @@ module Theme
     end
 
     def render_component
+      res.headers['Content-Type'] = 'Content-Type: text/javascript; charset=UTF-8'
+
       app.instance_variable_set :@res, res
       app.instance_variable_set :@req, req
+      app.instance_variable_set :@env, req.env
+
       name  = req.params['component_name'].to_sym
       event = req.params['component_event'].to_sym
+
       app.theme_components[name].trigger event, Hashr.new(req.params)
+
       res.finish
     end
   end

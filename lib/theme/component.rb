@@ -1,8 +1,6 @@
 require 'delegate'
 require 'hashr'
 
-Hashr.raise_missing_keys = true
-
 module Theme
   class Component < SimpleDelegator
     include Theme::Events
@@ -90,6 +88,13 @@ module Theme
         resp
       end
     end
+
+    def partial template, locals = {}
+      locals[:partial] = template
+      resp = render locals
+      resp
+    end
+
 
     def set_locals options
       options.to_h.each do |key, value|

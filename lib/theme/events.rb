@@ -21,7 +21,15 @@ module Theme
     end
 
     def trigger(name, options = {})
-      if self.class._event_blocks && callback = self.class._event_blocks[name]
+      callback = false
+
+      if respond_to? name
+        callback = name
+      elsif self.class._event_blocks
+        callback = self.class._event_blocks[name]
+      end
+
+      if callback
         if callback.is_a? Proc
           callback.call options
         else
@@ -37,11 +45,11 @@ module Theme
     end
 
     module Macros
-      attr_accessor :_event_blocks, :_listeners
+      attr_accessor :_event_blocks, :_for_listeners
 
       def on_event(name, options = {}, &block)
         if id = options[:for]
-          (@_listeners ||= []) << id
+          (@_for_listeners ||= []) << id
           name = :"#{id}_#{name}"
         end
 

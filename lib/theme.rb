@@ -130,11 +130,11 @@ module Theme
       Theme.config.components.each do |name, klass|
         component        = Object.const_get(klass).new self
         components[name] = component
-        component.instance_variable_set :@id
+        component.instance_variable_set :@id, name
       end
 
       components.each do |name, component|
-        if listeners = component.class._listeners
+        if listeners = component.class._for_listeners
           listeners.each do |id|
             if c = components[id.to_sym]
               c.add_listener component
