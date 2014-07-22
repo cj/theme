@@ -129,6 +129,7 @@ module Theme
       Theme.config.components.each do |name, klass|
         component        = Object.const_get(klass).new self
         components[name] = component
+        component.instance_variable_set :@id
       end
 
       components.each do |name, component|

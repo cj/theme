@@ -7,7 +7,7 @@ module Theme
   class Component < SimpleDelegator
     include Theme::Events
 
-    attr_reader :instance
+    attr_reader :instance, :node, :name
 
     def initialize instance = false
       @instance = instance
