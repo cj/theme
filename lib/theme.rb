@@ -26,6 +26,7 @@ module Theme
     def setup app = false
       if app
         load_component_files
+        app.settings[:render] ||= {}
         app.plugin Assets
         app.use Middleware
       else
