@@ -63,6 +63,10 @@ module Theme
           end
         end
       end
+
+      def sha
+        Thread.current[:_sha] ||= (Theme.config.sha || `git rev-parse HEAD`.strip)
+      end
     end
 
     def css_assets options = {}
@@ -76,7 +80,7 @@ module Theme
     private
 
     def sha
-      Thread.current[:_sha] ||= (Theme.config.sha || `git rev-parse HEAD`.strip)
+      self.class.sha
     end
   end
 end
