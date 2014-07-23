@@ -107,7 +107,7 @@ module Theme
         template
       }
 
-      if defined? cache.render
+      if defined? cache.respond_to?(:render, true)
         cache.render instance, c.to_h
       else
         cache.to_s
@@ -121,9 +121,6 @@ module Theme
   alias :comp :component
 
   def theme_components
-      # Dir.glob("#{Theme.config.component_path}/**/*.rb").each do |c|
-      #   load c
-      # end
     req.env[:_theme_components] ||= begin
       components = {}
 
