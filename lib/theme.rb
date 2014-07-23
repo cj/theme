@@ -107,7 +107,7 @@ module Theme
         template
       }
 
-      if defined? cache.respond_to?(:render, true)
+      if cache.respond_to?(:render, true)
         cache.render instance, c.to_h
       else
         cache.to_s
