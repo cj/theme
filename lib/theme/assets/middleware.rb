@@ -80,7 +80,7 @@ module Theme
         when 'js', 'javascript', 'javascripts'
           content_type = 'text/javascript; charset=utf-8'
         else
-          content_type = Rack::Mime.mime_type ext
+          content_type = Rack::Mime.mime_type ".#{ext}"
         end
 
         res.headers.merge!({

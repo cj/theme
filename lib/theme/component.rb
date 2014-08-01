@@ -72,12 +72,12 @@ module Theme
       @node ||= self.class.node.clone
     end
 
-    def render meth = 'display', options = {}
+    def render meth = 'display', options = {}, &block
       if method(meth).parameters.length > 0
         opts = Hashr.new(options)
-        resp = send meth, opts
+        resp = send meth, opts, &block
       else
-        resp = send meth
+        resp = send meth, &block
       end
 
       options.clear
