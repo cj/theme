@@ -116,12 +116,16 @@ module Theme
   end
 
   def component name, options = {}, &block
-    theme_components[name].set_locals options
+    if c = theme_components[name]
+      c.set_locals options
+    else
+      raise "No component called '#{name}' loaded."
+    end
   end
   alias :comp :component
 
   def theme_components
-    req.env[:_theme_components] ||= begin
+    @_theme_components ||= begin
       components = {}
 
       Theme.config.components.each do |name, klass|

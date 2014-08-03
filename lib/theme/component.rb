@@ -5,7 +5,7 @@ module Theme
   class Component < SimpleDelegator
     include Theme::Events
 
-    attr_reader :instance, :node, :name
+    attr_reader :instance, :node, :tpl, :name
 
     def initialize instance = false
       @instance = instance
@@ -51,13 +51,17 @@ module Theme
         end
       end
 
+      def tpl
+        @tpl ||= OpenStruct.new
+      end
+
       def clean &block
         block.call node
       end
       alias :setup :clean
     end
 
-    attr_accessor :node
+    attr_accessor :node, :tpl
 
     def method_missing method, *args, &block
       # respond_to?(symbol, include_all=false)
@@ -70,6 +74,10 @@ module Theme
 
     def node
       @node ||= self.class.node.clone
+    end
+
+    def tpl
+      @tpl ||= self.class.tpl.clone
     end
 
     def render meth = 'display', options = {}, &block
@@ -96,7 +104,7 @@ module Theme
     end
 
 
-    def set_locals options
+    def set_locals options = {}
       options.to_h.each do |key, value|
         (class << self; self; end).send(:attr_accessor, key.to_sym)
         instance_variable_set("@#{key}", value)
