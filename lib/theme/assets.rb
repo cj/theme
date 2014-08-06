@@ -1,5 +1,3 @@
-require 'theme/mab'
-
 module Theme
   module Assets
     autoload :Middleware, 'theme/assets/middleware'
@@ -9,6 +7,7 @@ module Theme
       def setup app
         app.plugin Render
         app.use Middleware
+        Tilt.register Theme::MabTemplate, 'mab'
       end
 
       def css_assets options = {}
@@ -27,7 +26,7 @@ module Theme
           options[:href] = "#{url}/css/all.css"
         end
 
-        mab { link options }
+        Theme.mab { link options }
       end
 
       def js_assets options = {}
@@ -43,7 +42,7 @@ module Theme
           options[:src] = "#{url}/js/all.js"
         end
 
-        mab { script options }
+        Theme.mab { script options }
       end
 
       def compile

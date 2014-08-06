@@ -1,10 +1,10 @@
 require 'mab'
 
-def mab(&blk)
-  Mab::Builder.new({}, self, &blk).to_s
-end
-
 module Theme
+  def self.mab(&blk)
+    Mab::Builder.new({}, self, &blk).to_s
+  end
+
   class MabTemplate < Tilt::Template
     def self.builder_class
       @builder_class ||= Class.new(Mab::Builder) do
@@ -46,5 +46,3 @@ module Theme
     end
   end
 end
-
-Tilt.register Theme::MabTemplate, 'mab'

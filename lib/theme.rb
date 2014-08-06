@@ -3,12 +3,13 @@ require 'nokogiri-styles'
 require 'tilt'
 
 module Theme
-  autoload :Version,    'theme/version'
-  autoload :Component,  'theme/component'
-  autoload :Assets,     'theme/assets'
-  autoload :Middleware, 'theme/middleware'
-  autoload :Render,     'theme/render'
-  autoload :Events,     'theme/events'
+  autoload :Version,     'theme/version'
+  autoload :Component,   'theme/component'
+  autoload :Assets,      'theme/assets'
+  autoload :Middleware,  'theme/middleware'
+  autoload :Render,      'theme/render'
+  autoload :Events,      'theme/events'
+  autoload :MabTemplate, 'theme/mab'
 
   IMAGE_TYPES   = %w(png gif jpg jpeg)
   FONT_TYPES    = %w(eot woff ttf svg)
