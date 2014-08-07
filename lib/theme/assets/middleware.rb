@@ -92,10 +92,10 @@ module Theme
           'Content-Disposition'       => 'inline'
         })
 
-        if name == "all-#{sha}"
-          @name = 'dominate-compiled'
+        if name == "theme-compiled-#{sha}"
+          @name = 'theme-compiled'
           res.write render_single_file
-        elsif name == 'all'
+        elsif name == 'theme'
           res.write render_all_files
         else
           res.write render_single_file
