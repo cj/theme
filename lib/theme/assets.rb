@@ -21,9 +21,9 @@ module Theme
         url = Theme.config.asset_url
 
         if Theme.config.assets_compiled
-          options[:href] = "#{url}/css/all-#{sha}.css"
+          options[:href] = "#{url}/css/theme-compiled-#{sha}.css"
         else
-          options[:href] = "#{url}/css/all.css"
+          options[:href] = "#{url}/css/theme.css"
         end
 
         Theme.mab { link options }
@@ -37,9 +37,9 @@ module Theme
         url = Theme.config.asset_url
 
         if Theme.config.assets_compiled
-          options[:src] = "#{url}/js/all-#{sha}.js"
+          options[:src] = "#{url}/js/theme-compiled-#{sha}.js"
         else
-          options[:src] = "#{url}/js/all.js"
+          options[:src] = "#{url}/js/theme.js"
         end
 
         Theme.mab { script options }
@@ -55,9 +55,9 @@ module Theme
               path = "#{type_path}/#{file}"
               content += Theme.load_file path
             end
-            tmp_path = "#{type_path}/tmp.dominate-compiled.#{type}"
+            tmp_path = "#{type_path}/tmp.theme-compiled.#{type}"
             File.write tmp_path, content
-            system "minify #{tmp_path} > #{type_path}/dominate-compiled.#{type}"
+            system "minify #{tmp_path} > #{type_path}/theme-compiled-#{sha}.#{type}"
             File.delete tmp_path
           end
         end
