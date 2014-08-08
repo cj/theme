@@ -29,7 +29,9 @@ module Theme
         load_component_files
         app.settings[:render] ||= {}
         app.plugin Assets
-        app.use Middleware
+        if Theme.config.use_component_middleware
+          app.use Middleware
+        end
       else
         yield config
       end
@@ -48,6 +50,7 @@ module Theme
         view_path:        './views',
         layout:           'app',
         layout_path:      './views/layouts',
+        use_component_middleware:   true,
         assets: OpenStruct.new({
           js: {},
           css: {}
@@ -130,9 +133,11 @@ module Theme
       components = {}
 
       Theme.config.components.each do |name, klass|
-        component        = Object.const_get(klass).new self
+        comp_klass       = Object.const_get(klass)
+        component        = comp_klass.new self
         components[name] = component
-        component.instance_variable_set :@id, name
+        # component.instance_variable_set :@id, name
+        comp_klass.instance_variable_set :@id, name
       end
 
       components.each do |name, component|

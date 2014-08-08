@@ -105,9 +105,10 @@ module Theme
       end
 
       def render_all_files
-        content = ''
-        files   = Theme.config.assets[ext]
-        path    = "#{Theme.config.asset_path}/#{type}"
+        content     = ''
+        files       = Theme.config.assets[ext]
+        type_folder = Theme.config.public_send "asset_#{type}_folder"
+        path        = "#{Theme.config.asset_path}/#{type_folder}"
 
         files.each do |file|
           if file[/^http/]

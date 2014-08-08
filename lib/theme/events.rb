@@ -1,4 +1,19 @@
 module Theme
+  class ThreadUtility
+    def self.with_connection(&block)
+      begin
+        yield block
+      rescue Exception => e
+        raise e
+      ensure
+        # Check the connection back in to the connection pool
+        if defined?(ActiveRecord) && ActiveRecord::Base.connection
+          ActiveRecord::Base.connection.close
+        end
+      end
+    end
+  end
+
   module Events
     def self.included(other)
       other.extend(Macros)
@@ -10,17 +25,27 @@ module Theme
 
     def notify_listeners(event, *args)
       id = self.class.instance_variable_get :@id
+      # threads = []
 
       (@listeners || []).each do |listener|
-        if id
-          listener.trigger(:"#{id}_#{event}", *args)
-        else
-          listener.trigger(event, *args)
+        event_key  = :"for_#{id}_#{event}"
+        event_keys = listener.class._event_blocks.keys
+
+        if id && event_keys.include?(event_key)
+          # threads << Thread.new do
+          #   ThreadUtility.with_connection do
+              listener.trigger(event_key, *args)
+            # end
+          # end
         end
       end
+      #
+      # threads.map(&:join)
     end
 
     def trigger(name, options = {})
+      options = Hashr.new(options) if options.is_a? Hash
+
       callback = false
 
       if respond_to? name
@@ -50,7 +75,7 @@ module Theme
       def on_event(name, options = {}, &block)
         if id = options[:for]
           (@_for_listeners ||= []) << id
-          name = :"#{id}_#{name}"
+          name = :"for_#{id}_#{name}"
         end
 
         @_event_blocks ||= {}
