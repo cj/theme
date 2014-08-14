@@ -129,7 +129,7 @@ module Theme
   alias :comp :component
 
   def theme_components
-    @_theme_components ||= begin
+    req.env[:_theme_components] ||= begin
       components = {}
 
       Theme.config.components.each do |name, klass|
